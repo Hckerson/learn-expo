@@ -5,7 +5,26 @@ interface Props {
     theme?: "primary" | "";
 }
 
-export default function Button({ label }: Props) {
+export default function Button({ label, theme }: Props) {
+    if (theme == "primary") {
+        return (
+            <View
+                style={[
+                    styles.buttonContainer,
+                    {
+                        borderWidth: 4,
+                        borderRadius: 18,
+                        borderColor: "#ffd33d",
+                    },
+                ]}
+            >
+                <Pressable style={styles.button}>
+                    <Text style={styles.buttonText}>{label}</Text>
+                </Pressable>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.buttonContainer}>
             <Pressable style={styles.button}>
