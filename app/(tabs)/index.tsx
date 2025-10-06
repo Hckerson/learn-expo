@@ -1,18 +1,26 @@
 import { useState } from "react";
 import Button from "@/components/button";
-import { StyleSheet, View } from "react-native";
+import EmojiList from "@/components/emojiList";
 import IconButton from "@/components/iconButton";
 import * as ImagePicker from "expo-image-picker";
 import ImageViewer from "@/components/imageViewer";
+import Emojipicker from "@/components/emoji-picker";
 import CircleButton from "@/components/circleButton";
+import EmojiSticker from "@/components/emoji-sticker";
+import { ImageSourcePropType, StyleSheet, View } from "react-native";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
+
 
 export default function Index() {
     const [selectedImage, setSelectedImage] = useState<string | undefined>(
         undefined
     );
+    const [showModal, setShowModal] = useState<boolean>(false);
     const [showAppOption, setShowAppOptions] = useState<boolean>(false);
+    const [pickedEmoji, setPickedEmoji] = useState<
+        ImageSourcePropType | undefined
+    >(undefined);
 
     const pickImageAsync = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -31,19 +39,19 @@ export default function Index() {
         }
     };
 
+    const onAddSticker = () => {
+        setShowModal(true);
+    };
 
-    const onAddSticker = ()=>{
+    const onReset = () => {
+        setShowAppOptions(false);
+    };
 
-    }
-    
-    const onReset = ()=>{
-        setShowAppOptions(false)
-    }
-    
-    const onSaveImageAsync = ()=>{
+    const onModalClose = () => {
+        setShowModal(false);
+    };
 
-    }
-
+    const onSaveImageAsync = () => {};
 
     return (
         <View style={styles.container}>
@@ -52,14 +60,22 @@ export default function Index() {
                     imageSource={PlaceholderImage}
                     selectedImage={selectedImage}
                 />
+                {pickedEmoji && <EmojiSticker stickerSrc={pickedEmoji} imageSize={40}/> }
             </View>
             {showAppOption ? (
                 <View style={styles.optionsContainer}>
                     <View style={styles.optionsRow}>
-                        <IconButton label="Reset" onPress={onReset} icon="refresh"/>
-                        <CircleButton onPress={onAddSticker}/>
-                        <IconButton label="Save" onPress={onReset} icon="save-alt"/>
-
+                        <IconButton
+                            label="Reset"
+                            onPress={onReset}
+                            icon="refresh"
+                        />
+                        <CircleButton onPress={onAddSticker} />
+                        <IconButton
+                            label="Save"
+                            onPress={onReset}
+                            icon="save-alt"
+                        />
                     </View>
                 </View>
             ) : (
@@ -75,6 +91,9 @@ export default function Index() {
                     />
                 </View>
             )}
+            <Emojipicker onPress={onModalClose} isVisible={showModal}>
+                <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
+            </Emojipicker>
         </View>
     );
 }
