@@ -1,9 +1,10 @@
-import { useState } from "react";
 import Button from "@/components/button";
+import { useState, useEffect } from "react";
 import EmojiList from "@/components/emojiList";
 import IconButton from "@/components/iconButton";
 import * as ImagePicker from "expo-image-picker";
 import ImageViewer from "@/components/imageViewer";
+import * as MediaLibrary from 'expo-media-library';
 import Emojipicker from "@/components/emoji-picker";
 import CircleButton from "@/components/circleButton";
 import EmojiSticker from "@/components/emoji-sticker";
@@ -22,6 +23,14 @@ export default function Index() {
     const [pickedEmoji, setPickedEmoji] = useState<
         ImageSourcePropType | undefined
     >(undefined);
+
+  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
+
+    useEffect(()=>{
+        if(!permissionResponse?.granted){
+            requestPermission()
+        }
+    },[])
 
     const pickImageAsync = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({

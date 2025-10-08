@@ -32,7 +32,6 @@ export default function EmojiList({ onSelect, onCloseModal }: ListProps) {
             renderItem={({ item, index }) => (
                 <Pressable
                     onPress={() => {
-                        console.log(item)
                         onSelect(item);
                         onCloseModal();
                     }}
