@@ -6,6 +6,7 @@ import * as ImagePicker from "expo-image-picker";
 import ImageViewer from "@/components/imageViewer";
 import * as MediaLibrary from 'expo-media-library';
 import Emojipicker from "@/components/emoji-picker";
+import { captureRef } from 'react-native-view-shot';
 import CircleButton from "@/components/circleButton";
 import EmojiSticker from "@/components/emoji-sticker";
 import { ImageSourcePropType, StyleSheet, View } from "react-native";
@@ -23,14 +24,6 @@ export default function Index() {
     const [pickedEmoji, setPickedEmoji] = useState<
         ImageSourcePropType | undefined
     >(undefined);
-
-  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
-
-    useEffect(()=>{
-        if(!permissionResponse?.granted){
-            requestPermission()
-        }
-    },[])
 
     const pickImageAsync = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
