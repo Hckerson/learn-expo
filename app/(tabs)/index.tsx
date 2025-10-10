@@ -5,10 +5,11 @@ import EmojiSticker from "@/components/emoji-sticker";
 import EmojiList from "@/components/emojiList";
 import IconButton from "@/components/iconButton";
 import ImageViewer from "@/components/imageViewer";
+import domtoimage from "dom-to-image";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { useEffect, useRef, useState } from "react";
-import { ImageSourcePropType, StyleSheet, View } from "react-native";
+import { ImageSourcePropType, Platform, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { captureRef } from "react-native-view-shot";
 
@@ -64,18 +65,36 @@ export default function Index() {
     };
 
     const onSaveImageAsync = async () => {
-        try {
-            const loclUri = await captureRef(imageRef, {
-                height: 440,
-                quality: 1,
-            });
+        if (Platform.OS == "web") {
+            try {
+                const dataUrl = await domtoimage.toPng(imageRef.current, {
+                    quality: 1,
+                    width: 320,
+                    height: 440,
+                });
 
-            await MediaLibrary.saveToLibraryAsync(loclUri);
-            if (loclUri) {
-                alert("Saved!");
+                let link = document.createElement("a");
+                link.download = "sticker-smash.png";
+                link.href = dataUrl;
+                link.click();
+            } catch (error) {
+                console.error(error);
             }
-        } catch (error) {
-            console.log(error);
+        } else {
+            try {
+                const loclUri = await captureRef(imageRef, {
+                    height: 440,
+                    format: "png",
+                    quality: 1,
+                });
+
+                await MediaLibrary.saveToLibraryAsync(loclUri);
+                if (loclUri) {
+                    alert("Saved!");
+                }
+            } catch (error) {
+                console.error(error);
+            }
         }
     };
 
