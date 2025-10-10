@@ -1,19 +1,17 @@
 import Button from "@/components/button";
-import { useState, useEffect } from "react";
+import CircleButton from "@/components/circleButton";
+import Emojipicker from "@/components/emoji-picker";
+import EmojiSticker from "@/components/emoji-sticker";
 import EmojiList from "@/components/emojiList";
 import IconButton from "@/components/iconButton";
-import * as ImagePicker from "expo-image-picker";
 import ImageViewer from "@/components/imageViewer";
-import * as MediaLibrary from 'expo-media-library';
-import Emojipicker from "@/components/emoji-picker";
-import { captureRef } from 'react-native-view-shot';
-import CircleButton from "@/components/circleButton";
-import EmojiSticker from "@/components/emoji-sticker";
+import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from "expo-media-library";
+import { useEffect, useState } from "react";
 import { ImageSourcePropType, StyleSheet, View } from "react-native";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
-
 
 export default function Index() {
     const [selectedImage, setSelectedImage] = useState<string | undefined>(
@@ -24,6 +22,15 @@ export default function Index() {
     const [pickedEmoji, setPickedEmoji] = useState<
         ImageSourcePropType | undefined
     >(undefined);
+
+    const [permissionResponse, requestPermission] =
+        MediaLibrary.usePermissions();
+
+    useEffect(()=>{
+        if(!permissionResponse?.granted){
+            requestPermission()
+        }
+    })
 
     const pickImageAsync = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -63,7 +70,9 @@ export default function Index() {
                     imageSource={PlaceholderImage}
                     selectedImage={selectedImage}
                 />
-                {pickedEmoji && <EmojiSticker stickerSrc={pickedEmoji} imageSize={40}/> }
+                {pickedEmoji && (
+                    <EmojiSticker stickerSrc={pickedEmoji} imageSize={40} />
+                )}
             </View>
             {showAppOption ? (
                 <View style={styles.optionsContainer}>
@@ -95,7 +104,10 @@ export default function Index() {
                 </View>
             )}
             <Emojipicker onPress={onModalClose} isVisible={showModal}>
-                <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
+                <EmojiList
+                    onSelect={setPickedEmoji}
+                    onCloseModal={onModalClose}
+                />
             </Emojipicker>
         </GestureHandlerRootView>
     );
